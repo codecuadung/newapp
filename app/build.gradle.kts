@@ -40,10 +40,10 @@ dependencies {
     // Import the Firebase BoM
     implementation ( platform ( "com.google.firebase:firebase-bom:32.6.0" ))
     implementation ("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+    implementation("com.google.firebase:firebase-database:20.3.0")
+    implementation("com.squareup.picasso:picasso:2.8")
 
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    // https://firebase.google.com/docs/android/setup#available-libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

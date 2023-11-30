@@ -9,23 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.adminappgame.R;
+public class sanPhamFragment extends Fragment {
 
-
-public class FragmentSanPham extends Fragment {
-    public FragmentSanPham() {
-    }
-    public static FragmentSanPham newInstance() {
-        FragmentSanPham fragment = new FragmentSanPham();
-
-        return fragment;
-    }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_san_pham, container, false);
     }
 }
