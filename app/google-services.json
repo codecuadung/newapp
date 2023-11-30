@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "38674785833",
-    "firebase_url": "https://horizon-b8e7d-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "horizon-b8e7d",
-    "storage_bucket": "horizon-b8e7d.appspot.com"
+    "project_number": "499043529536",
+    "firebase_url": "https://horizon-7a734-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "horizon-7a734",
+    "storage_bucket": "horizon-7a734.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:38674785833:android:e2f07bfc7b3b0e1554de38",
+        "mobilesdk_app_id": "1:499043529536:android:cbf6a712183aa416c0c0a5",
         "android_client_info": {
           "package_name": "com.example.adminappgame"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCNTfC7NNcY4MvD_oj9wv1r7hzpNmHgXYg"
+          "current_key": "AIzaSyD7UTaB--N-_cRzc95dawtZk__AqCB-NXA"
         }
       ],
       "services": {
@@ -27,7 +27,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:38674785833:android:e5cf293937797a0554de38",
+        "mobilesdk_app_id": "1:499043529536:android:7469c2c57f5e6541c0c0a5",
         "android_client_info": {
           "package_name": "com.example.horizon"
         }
@@ -35,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCNTfC7NNcY4MvD_oj9wv1r7hzpNmHgXYg"
+          "current_key": "AIzaSyD7UTaB--N-_cRzc95dawtZk__AqCB-NXA"
         }
       ],
       "services": {
