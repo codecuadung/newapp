@@ -4,18 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-    <EditText
+    <!-- Bottom Navigation View -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edsend"
-        android:layout_marginTop="40dp"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnsemd"
-        android:text="send"
-        android:layout_gravity="center"/>
+        android:background="#2C6E9A"
+        android:layout_gravity="bottom"
+        app:menu="@menu/menu"
+        app:labelVisibilityMode="labeled"/>
+
 </LinearLayout>
