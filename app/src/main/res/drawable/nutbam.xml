@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="3dp"></stroke>
+    <gradient
+        android:startColor="#6F858383"
+        android:endColor="#B4000000"
+        android:type="linear"
+        android:angle="270"/> <!-- Thiết lập góc 270 độ để tạo gradient từ trên xuống -->
+</shape>

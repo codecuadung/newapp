@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.adminappgame.fragments.Fragment_TheLoai;
 import com.example.adminappgame.fragments.sanPhamFragment;
 import com.example.adminappgame.fragments.FragmentDanhSach;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
-                if (item.getItemId() == R.id.nav_home) {
-                    fragment = new sanPhamFragment();
-                } else if (item.getItemId() == R.id.nav_TheLoai) {
+                if (item.getItemId() == R.id.nav_TheLoai) {
+                    fragment = new Fragment_TheLoai();
+                } else if (item.getItemId() == R.id.nav_home) {
                     fragment = new FragmentDanhSach();
                 } else {
                     fragment = new FragmentDanhSach();
