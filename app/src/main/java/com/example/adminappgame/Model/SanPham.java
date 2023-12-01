@@ -1,21 +1,20 @@
 package com.example.adminappgame.Model;
 
 public class SanPham {
-    private int maSanPham;
     private String tenSanPham;
     private int gia;
     private int maLoai;
-    private int soLuongTai;
     private String anhSP;
     private String moTa;
     private String dungLuong;
+    private int soLuongTai;
 
-    public int getMaSanPham() {
-        return maSanPham;
+    public int getSoLuongTai() {
+        return soLuongTai;
     }
 
-    public void setMaSanPham(int maSanPham) {
-        this.maSanPham = maSanPham;
+    public void setSoLuongTai(int soLuongTai) {
+        this.soLuongTai = soLuongTai;
     }
 
     public String getTenSanPham() {
@@ -42,13 +41,6 @@ public class SanPham {
         this.maLoai = maLoai;
     }
 
-    public int getSoLuongTai() {
-        return soLuongTai;
-    }
-
-    public void setSoLuongTai(int soLuongTai) {
-        this.soLuongTai = soLuongTai;
-    }
 
     public String getAnhSP() {
         return anhSP;
@@ -74,8 +66,12 @@ public class SanPham {
         this.dungLuong = dungLuong;
     }
 
-    public SanPham(int maSanPham, String tenSanPham, int gia, int maLoai, int soLuongTai, String anhSP, String moTa, String dungLuong) {
-        this.maSanPham = maSanPham;
+
+
+    public SanPham() {
+    }
+
+    public SanPham(String tenSanPham, int gia, int maLoai,int soLuongTai,  String dungLuong,String moTa, String anhSP) {
         this.tenSanPham = tenSanPham;
         this.gia = gia;
         this.maLoai = maLoai;
@@ -83,22 +79,5 @@ public class SanPham {
         this.anhSP = anhSP;
         this.moTa = moTa;
         this.dungLuong = dungLuong;
-    }
-
-    public SanPham() {
-    }
-
-    @Override
-    public String toString() {
-        return "SanPham{" +
-                "maSanPham=" + maSanPham +
-                ", tenSanPham='" + tenSanPham + '\'' +
-                ", gia=" + gia +
-                ", maLoai=" + maLoai +
-                ", soLuongTai=" + soLuongTai +
-                ", anhSP='" + anhSP + '\'' +
-                ", moTa='" + moTa + '\'' +
-                ", dungLuong='" + dungLuong + '\'' +
-                '}';
     }
 }
