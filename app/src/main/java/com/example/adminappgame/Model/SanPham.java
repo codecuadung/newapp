@@ -1,6 +1,7 @@
 package com.example.adminappgame.Model;
 
 public class SanPham {
+    private String documentId;
     private String tenSanPham;
     private int gia;
     private int maLoai;
@@ -8,6 +9,14 @@ public class SanPham {
     private String moTa;
     private String dungLuong;
     private int soLuongTai;
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
 
     public int getSoLuongTai() {
         return soLuongTai;

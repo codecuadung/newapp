@@ -4,13 +4,16 @@ import static android.content.ContentValues.TAG;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,19 +46,35 @@ public class sanPhamFragment extends Fragment {
     EditText edtenSP,edGia,edMaLoai,edDungLuong,edMoTa,edLinkAnh,edSoLuongTai;
     Button btnSave, btnCancel;
     adapterSanPham adapter;
+    private List<SanPham>sanPhamList;
     private FirebaseFirestore firestore;
     private CollectionReference sanPhamCollection;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_san_pham, container, false);
         firestore = FirebaseFirestore.getInstance();
         sanPhamCollection = firestore.collection("games");
         rcv = view.findViewById(R.id.rcvSP);
-        rcv = view.findViewById(R.id.rcvSP);
+        sanPhamList = new ArrayList<>();
         rcv.setLayoutManager(new LinearLayoutManager(getContext()));
         fab = view.findViewById(R.id.fab);
+        adapter = new adapterSanPham(sanPhamList);
+        rcv.setAdapter(adapter);
+
+        adapter.setOnDeleteClickListener(new adapterSanPham.OnDeleteClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                deleteItem(position);
+            }
+        });
+        //update
+        adapter.setOnUpdateClickListener(new adapterSanPham.OnUpdateClickListener() {
+            @Override
+            public void onUpdateClick(int position) {
+                updatedialog(position);
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,12 +85,17 @@ public class sanPhamFragment extends Fragment {
         sanPhamCollection.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<SanPham> sanPhamList = new ArrayList<>();
+                sanPhamList.clear();
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                     SanPham sanPham = documentSnapshot.toObject(SanPham.class);
+                    String documentID = documentSnapshot.getId();
+                    if (documentID != null) {
+                        sanPham.setDocumentId(documentID);
+                    }
                     sanPhamList.add(sanPham);
                 }
-                updateRecyclerView(sanPhamList);
+                adapter = new adapterSanPham(sanPhamList);
+                rcv.setAdapter(adapter);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -81,9 +105,125 @@ public class sanPhamFragment extends Fragment {
         });
         return view;
     }
-    private void updateRecyclerView(List<SanPham> sanPhamList) {
-        adapter = new adapterSanPham(sanPhamList);
-        rcv.setAdapter(adapter);
+
+    private void deleteItem(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này?")
+                .setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        thuchienxoa(position);
+                    }
+                })
+                .setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create().show();
+    }
+    private void thuchienxoa(int position){
+        SanPham sanPhamValue = sanPhamList.get(position);
+        String documentID = sanPhamValue.getDocumentId();
+
+        if (documentID != null) {
+            sanPhamCollection.document(documentID).delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(), "Xóa thành công", Toast.LENGTH_SHORT).show();
+                            adapter.deleteItem(position);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Lỗi khi xóa sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Log.e(TAG, "Lỗi: getDocumentId() trả về null");
+            Log.d(TAG, "Document ID: " + documentID);
+        }
+    }
+    private void updatedialog(int position){
+        SanPham sanPhamValue = sanPhamList.get(position);
+        Dialog dialog1 = new Dialog(getContext());
+        dialog1.setContentView(R.layout.opendialog_sanpham);
+
+        edtenSP = dialog1.findViewById(R.id.edTenSP);
+        edGia = dialog1.findViewById(R.id.edGiaSP);
+        edMaLoai = dialog1.findViewById(R.id.edMaLoai);
+        edSoLuongTai = dialog1.findViewById(R.id.edSoLuongTai);
+        edDungLuong = dialog1.findViewById(R.id.edDungLuong);
+        edMoTa = dialog1.findViewById(R.id.edMoTa);
+        edLinkAnh = dialog1.findViewById(R.id.edLinkanh);
+        btnSave = dialog1.findViewById(R.id.btnSaveTL);
+        btnCancel = dialog1.findViewById(R.id.btnCancelTL);
+
+        edtenSP.setText(sanPhamValue.getTenSanPham());
+        edGia.setText(String.valueOf(sanPhamValue.getGia()));
+        edMaLoai.setText(String.valueOf(sanPhamValue.getMaLoai()));
+        edSoLuongTai.setText(String.valueOf(sanPhamValue.getSoLuongTai()));
+        edDungLuong.setText(sanPhamValue.getDungLuong());
+        edMoTa.setText(sanPhamValue.getMoTa());
+        edLinkAnh.setText(sanPhamValue.getAnhSP());
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String tenSP = edtenSP.getText().toString().trim();
+                int giaSP = Integer.parseInt(edGia.getText().toString().trim());
+                int maLoai = Integer.parseInt(edMaLoai.getText().toString().trim());
+                int soLuongTai = Integer.parseInt(edSoLuongTai.getText().toString().trim());
+                String dungLuong = edDungLuong.getText().toString().trim();
+                String moTa = edMoTa.getText().toString().trim();
+                String linkAnh = edLinkAnh.getText().toString().trim();
+                if (TextUtils.isEmpty(tenSP) || TextUtils.isEmpty(String.valueOf(giaSP)) || TextUtils.isEmpty(String.valueOf(maLoai))
+                        || TextUtils.isEmpty(String.valueOf(soLuongTai)) || TextUtils.isEmpty(dungLuong)
+                        || TextUtils.isEmpty(moTa) || TextUtils.isEmpty(linkAnh)) {
+                    Snackbar.make(view, "Vui lòng điền đầy đủ thông tin", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                //update
+                sanPhamValue.setTenSanPham(tenSP);
+                sanPhamValue.setGia(giaSP);
+                sanPhamValue.setMaLoai(maLoai);
+                sanPhamValue.setSoLuongTai(soLuongTai);
+                sanPhamValue.setDungLuong(dungLuong);
+                sanPhamValue.setMoTa(moTa);
+                sanPhamValue.setAnhSP(linkAnh);
+
+                String documentID = sanPhamValue.getDocumentId();
+                if (documentID != null) {
+                    sanPhamCollection.document(documentID).set(sanPhamValue)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                    dialog1.dismiss();
+                                    adapter.notifyDataSetChanged();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Snackbar.make(view, "Lỗi khi cập nhật sản phẩm: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
+                    Log.e(TAG, "Lỗi: getDocumentId() trả về null");
+                    Log.d(TAG, "Document ID: " + documentID);
+                }
+
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog1.dismiss();
+            }
+        });
+        dialog1.show();
     }
     private void DialogInsert(){
         dialog = new Dialog(getContext());
@@ -116,7 +256,8 @@ public class sanPhamFragment extends Fragment {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 Toast.makeText(getContext(),"Thêm thành công",Toast.LENGTH_SHORT).show();
-                                dialog.dismiss(); // Đóng dialog sau khi thêm thành công
+                                dialog.dismiss();
+                                adapter.notifyDataSetChanged();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -135,6 +276,9 @@ public class sanPhamFragment extends Fragment {
             }
         });
         dialog.show();
+
     }
+
+
 
 }
