@@ -2,13 +2,13 @@ package com.example.adminappgame.Model;
 
 public class SanPham {
     private String documentId;
-    private String tenSanPham;
-    private int gia;
-    private int maLoai;
-    private String anhSP;
-    private String moTa;
-    private String dungLuong;
-    private int soLuongTai;
+    private String name;
+    private int price;
+    private int type;
+    private String img_url;
+    private String description;
+    private String storage;
+    private int downloaded;
     public String getDocumentId() {
         return documentId;
     }
@@ -18,75 +18,72 @@ public class SanPham {
     }
 
 
-    public int getSoLuongTai() {
-        return soLuongTai;
+    public String getName() {
+        return name;
     }
 
-    public void setSoLuongTai(int soLuongTai) {
-        this.soLuongTai = soLuongTai;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTenSanPham() {
-        return tenSanPham;
+    public int getPrice() {
+        return price;
     }
 
-    public void setTenSanPham(String tenSanPham) {
-        this.tenSanPham = tenSanPham;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
-    public int getGia() {
-        return gia;
+    public int getType() {
+        return type;
     }
 
-    public void setGia(int gia) {
-        this.gia = gia;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public int getMaLoai() {
-        return maLoai;
+    public String getImg_url() {
+        return img_url;
     }
 
-    public void setMaLoai(int maLoai) {
-        this.maLoai = maLoai;
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
     }
 
-
-    public String getAnhSP() {
-        return anhSP;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAnhSP(String anhSP) {
-        this.anhSP = anhSP;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getMoTa() {
-        return moTa;
+    public String getStorage() {
+        return storage;
     }
 
-    public void setMoTa(String moTa) {
-        this.moTa = moTa;
+    public void setStorage(String storage) {
+        this.storage = storage;
     }
 
-    public String getDungLuong() {
-        return dungLuong;
+    public int getDownloaded() {
+        return downloaded;
     }
 
-    public void setDungLuong(String dungLuong) {
-        this.dungLuong = dungLuong;
+    public void setDownloaded(int downloaded) {
+        this.downloaded = downloaded;
     }
 
-
+    public SanPham(String name, int price, int type, int downloaded, String storage, String description, String img_url) {
+        this.name = name;
+        this.price = price;
+        this.type = type;
+        this.img_url = img_url;
+        this.description = description;
+        this.storage = storage;
+        this.downloaded = downloaded;
+    }
 
     public SanPham() {
-    }
-
-    public SanPham(String tenSanPham, int gia, int maLoai,int soLuongTai,  String dungLuong,String moTa, String anhSP) {
-        this.tenSanPham = tenSanPham;
-        this.gia = gia;
-        this.maLoai = maLoai;
-        this.soLuongTai = soLuongTai;
-        this.anhSP = anhSP;
-        this.moTa = moTa;
-        this.dungLuong = dungLuong;
     }
 }

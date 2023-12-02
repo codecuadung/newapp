@@ -57,7 +57,7 @@ public class adapterSanPham extends RecyclerView.Adapter<adapterSanPham.sanPhamV
     public void onBindViewHolder(@NonNull sanPhamViewHolder holder, int position) {
         SanPham sanPham = sanPhamList.get(position);
         holder.bind(sanPham);
-        Picasso.get().load(sanPham.getAnhSP()).into(holder.imgSanPham);
+        Picasso.get().load(sanPham.getImg_url()).into(holder.imgSanPham);
         holder.btndelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,11 +115,11 @@ public class adapterSanPham extends RecyclerView.Adapter<adapterSanPham.sanPhamV
 
         }
         public void bind(SanPham sanPham) {
-            txtTenSP.setText("Tên: " + sanPham.getTenSanPham());
-            txtDungLuong.setText("Dung lượng: " + sanPham.getDungLuong());
-            txtGiaChiTiet.setText("Giá: " + sanPham.getGia() + "đ");
-            txtMota.setText("Mô tả: " + sanPham.getMoTa());
-            txtSoLuongTai.setText("Số lượng tải: "+sanPham.getSoLuongTai());
+            txtTenSP.setText("Tên: " + sanPham.getName());
+            txtDungLuong.setText("Dung lượng: " + sanPham.getStorage());
+            txtGiaChiTiet.setText("Giá: " + sanPham.getPrice() + "đ");
+            txtMota.setText("Mô tả: " + sanPham.getDescription());
+            txtSoLuongTai.setText("Số lượng tải: "+sanPham.getDownloaded());
         }
     }
 }

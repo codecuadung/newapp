@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.adminappgame.fragments.sanPhamFragment;
+import com.example.adminappgame.fragments.taiKhoanFragment;
 import com.example.adminappgame.fragments.theLoaiFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            // Khai báo biến fragment ở đây để tránh lỗi "might not have been initialized"
             Fragment fragment = null;
 
             @Override
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new theLoaiFragment();
                 } else if (item.getItemId() == R.id.nav_home) {
                     fragment = new sanPhamFragment();
+                } else if (item.getItemId() == R.id.nav_TaiKhoan) {
+                    fragment = new taiKhoanFragment();
                 }
 
                 // Kiểm tra xem biến fragment đã được khởi tạo chưa

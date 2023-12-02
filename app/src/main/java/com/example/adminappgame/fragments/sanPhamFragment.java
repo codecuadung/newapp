@@ -160,13 +160,13 @@ public class sanPhamFragment extends Fragment {
         btnSave = dialog1.findViewById(R.id.btnSaveTL);
         btnCancel = dialog1.findViewById(R.id.btnCancelTL);
 
-        edtenSP.setText(sanPhamValue.getTenSanPham());
-        edGia.setText(String.valueOf(sanPhamValue.getGia()));
-        edMaLoai.setText(String.valueOf(sanPhamValue.getMaLoai()));
-        edSoLuongTai.setText(String.valueOf(sanPhamValue.getSoLuongTai()));
-        edDungLuong.setText(sanPhamValue.getDungLuong());
-        edMoTa.setText(sanPhamValue.getMoTa());
-        edLinkAnh.setText(sanPhamValue.getAnhSP());
+        edtenSP.setText(sanPhamValue.getName());
+        edGia.setText(String.valueOf(sanPhamValue.getPrice()));
+        edMaLoai.setText(String.valueOf(sanPhamValue.getType()));
+        edSoLuongTai.setText(String.valueOf(sanPhamValue.getDownloaded()));
+        edDungLuong.setText(sanPhamValue.getStorage());
+        edMoTa.setText(sanPhamValue.getDescription());
+        edLinkAnh.setText(sanPhamValue.getImg_url());
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -184,13 +184,13 @@ public class sanPhamFragment extends Fragment {
                     return;
                 }
                 //update
-                sanPhamValue.setTenSanPham(tenSP);
-                sanPhamValue.setGia(giaSP);
-                sanPhamValue.setMaLoai(maLoai);
-                sanPhamValue.setSoLuongTai(soLuongTai);
-                sanPhamValue.setDungLuong(dungLuong);
-                sanPhamValue.setMoTa(moTa);
-                sanPhamValue.setAnhSP(linkAnh);
+                sanPhamValue.setName(tenSP);
+                sanPhamValue.setPrice(giaSP);
+                sanPhamValue.setType(maLoai);
+                sanPhamValue.setDownloaded(soLuongTai);
+                sanPhamValue.setStorage(dungLuong);
+                sanPhamValue.setDescription(moTa);
+                sanPhamValue.setImg_url(linkAnh);
 
                 String documentID = sanPhamValue.getDocumentId();
                 if (documentID != null) {
@@ -250,12 +250,12 @@ public class sanPhamFragment extends Fragment {
                 String linkAnh = edLinkAnh.getText().toString().trim();
                 String soluongtai = edSoLuongTai.getText().toString().trim();
 
-                SanPham sanPham = new SanPham(tenSP,Integer.parseInt(giaSP),Integer.parseInt(maLoai),Integer.parseInt(soluongtai),dungLuong,moTa,linkAnh);
+                SanPham sanPham = new SanPham(tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), Integer.parseInt(soluongtai), dungLuong, moTa, linkAnh);
                 sanPhamCollection.add(sanPham)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                Toast.makeText(getContext(),"Thêm thành công",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Thêm thành công", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 adapter.notifyDataSetChanged();
                             }
@@ -267,6 +267,7 @@ public class sanPhamFragment extends Fragment {
                                 Snackbar.make(view, "Lỗi khi thêm sản phẩm: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                             }
                         });
+
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
