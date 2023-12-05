@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 
+import com.example.adminappgame.Model.Recharge;
 import com.example.adminappgame.Model.User;
 import com.example.adminappgame.R;
 import com.example.adminappgame.adapters.adapterSanPham;
@@ -30,6 +31,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -44,7 +47,8 @@ public class taiKhoanFragment extends Fragment {
     private List<User> listUser;
     private adapterTaiKhoan adapter;
     private DatabaseReference reference;
-    private FirebaseFirestore firestore;
+    private FirebaseFirestore db;
+    private CollectionReference collectionReference;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +58,7 @@ public class taiKhoanFragment extends Fragment {
         rcv = view.findViewById(R.id.rcvtk);
         listUser = new ArrayList<>();
         adapter = new adapterTaiKhoan(listUser, getContext());
-        firestore = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         rcv.setLayoutManager(new LinearLayoutManager(getContext()));
         rcv.setAdapter(adapter);
         userData();
@@ -69,12 +73,30 @@ public class taiKhoanFragment extends Fragment {
             @Override
             public void onUpdateMoneyClick(int position) {
                 User user = listUser.get(position);
-                updateUserMoney(user.getEmail());
+                Recharge recharge = new Recharge();
+                String rechargeId = recharge.getId();
+                collectionReference = db.collection("Recharge").document(rechargeId).collection("CurrentUser");
+                Log.d("TaiKhoanFragment", rechargeId);
+
+                collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Lấy dữ liệu từ mỗi tài liệu trong bộ sưu tập "Recharge/{documentId}/CurrentUser" và log ra
+                                Log.d("TaiKhoanFragment", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.e("TaiKhoanFragment", "Error getting documents", task.getException());
+                        }
+                    }
+                });
             }
         });
         return view;
 
     }
+    
     private void showDeleteConfirmationDialog(String userEmail) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Xác nhận xóa tài khoản");
@@ -146,105 +168,8 @@ public class taiKhoanFragment extends Fragment {
             }
         });
     }
-    private void updateUserMoney(String userEmail) {
-        firestore.collection("Recharge")
-                .whereEqualTo("CurrentUser.userMail", userEmail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                String rechargeId = document.getId();
-//
-//                                DocumentSnapshot currentUserSnapshot = document.getDocumentReference("currentUser").get().getResult();
-//
-//                                // Kiểm tra xem document của "CurrentUser" có tồn tại hay không
-//                                if (currentUserSnapshot.exists()) {
-//                                    // Lấy các trường dữ liệu từ "CurrentUser"
-//                                    Map<String, Object> currentUserData = currentUserSnapshot.getData();
-//                                    Log.d("taiKhoanFragment", "currentdata: " + currentUserData);
-//
-//                                    // Kiểm tra xem trường "userMoney" có tồn tại hay không
-//                                    if (currentUserData != null && currentUserData.containsKey("userMoney")) {
-//                                        String userMoney = (String) currentUserData.get("userMoney");
-//                                        String rechargeMoney = document.getString("moneyRecharge");
-//                                        Log.d("taiKhoanFragment", "usermoney: " + userMoney);
-//
-//                                        int newUserMoney = Integer.parseInt(userMoney) + Integer.parseInt(rechargeMoney);
-//
-//                                        // Tiếp theo, cập nhật số tiền mới vào node Users của Retimedatabase
-//                                        updateMoneyInRetimeDatabase(userEmail, newUserMoney, rechargeId);
-//                                    } else {
-//                                        Log.e("taiKhoanFragment", "Không tìm thấy trường 'userMoney'");
-//                                    }
-//                                } else {
-//                                    Log.e("taiKhoanFragment", "Document 'CurrentUser' không tồn tại");
-//                                }
-//                            }
-//                        } else {
-//                            Toast.makeText(getContext(), "Người dùng không nạp tiền", Toast.LENGTH_SHORT).show();
-//                        }
 
 
-
-                    }
-                });
-
-
-    }
-
-
-
-    private void updateMoneyInRetimeDatabase(String userEmail, int newUserMoney, String rechargeId) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-        Query query = databaseReference.orderByChild("email").equalTo(userEmail);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    snapshot1.getRef().child("money").setValue(newUserMoney)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Log.d("taiKhoanFragment", "Money updated successfully");
-                                    deleteCurrentUserNode(rechargeId);
-                                    Toast.makeText(getContext(), "Đã cập nhật số tiền mới cho tài khoản", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getContext(), "Lỗi cập nhật số tiền mới", Toast.LENGTH_SHORT).show();
-                                    Log.e("taiKhoanFragment", "Error updating money", e);
-                                }
-                            });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("YourFragment", "Error checking money", databaseError.toException());
-            }
-        });
-    }
-
-    private void deleteCurrentUserNode(String rechargeId) {
-        firestore.collection("Recharge").document(rechargeId).delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("YourFragment", "Deleted currentUser node successfully");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("YourFragment", "Error deleting currentUser node", e);
-                    }
-                });
-    }
 
 
 

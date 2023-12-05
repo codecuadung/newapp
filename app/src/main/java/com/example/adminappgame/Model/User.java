@@ -5,6 +5,23 @@ public class User {
     private String name;
     private int money;
     private String profileImg;
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public User(String email, String name, int money, String profileImg, String password) {
+        this.email = email;
+        this.name = name;
+        this.money = money;
+        this.profileImg = profileImg;
+        this.password = password;
+    }
 
     public String getEmail() {
         return email;

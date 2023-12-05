@@ -1,6 +1,16 @@
 package com.example.adminappgame.Model;
 
 public class Recharge {
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     private String userMail;
     private int userMoney;
     private int moneyRecharge;
