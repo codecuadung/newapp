@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adminappgame.Model.User;
 import com.example.adminappgame.R;
+import com.example.adminappgame.fragments.taiKhoanFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -48,12 +49,26 @@ public class adapterTaiKhoan extends RecyclerView.Adapter<adapterTaiKhoan.taiKho
     public void setOnUpdateMoneyClickListener(OnUpdateMoneyClickListener listener) {
         this.onUpdateMoneyClickListener = listener;
     }
+    //khóa tài khoản
+    public interface OnBanStatusClickListener {
+        void onBanStatusClick(int position, boolean currentStatus);
+    }
 
+    private OnBanStatusClickListener onBanStatusClickListener;
+
+    public void setOnBanStatusClickListener(OnBanStatusClickListener listener) {
+        this.onBanStatusClickListener = listener;
+    }
+
+    //delete
     public void deleteItem(int position) {
         userList.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, userList.size());
     }
+    //khóa tài khoản
+
+
     @NonNull
     @Override
     public taiKhoanViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,11 +76,43 @@ public class adapterTaiKhoan extends RecyclerView.Adapter<adapterTaiKhoan.taiKho
         return new taiKhoanViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull taiKhoanViewHolder holder, int position) {
         User user = userList.get(position);
         holder.bind(user);
         Picasso.get().load(user.getProfileImg()).into(holder.imgTaiKhoan);
+        //khóa tài khoản
+        if (user.isBanStatus()) {
+            holder.btnbanStatus.setText("Mở tài khoản");
+        } else {
+            holder.btnbanStatus.setText("Khóa tài khoản");
+        }
+
+        holder.btnbanStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onBanStatusClickListener != null) {
+                    int position = holder.getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        onBanStatusClickListener.onBanStatusClick(position, user.isBanStatus());
+                    }
+                }
+            }
+        });
+        holder.btnbanStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onBanStatusClickListener != null) {
+                    int position = holder.getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        onBanStatusClickListener.onBanStatusClick(position, user.isBanStatus());
+                    }
+                }
+            }
+        });
+
+        // Xóa
         holder.btndelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +120,7 @@ public class adapterTaiKhoan extends RecyclerView.Adapter<adapterTaiKhoan.taiKho
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -82,7 +130,7 @@ public class adapterTaiKhoan extends RecyclerView.Adapter<adapterTaiKhoan.taiKho
     public static class taiKhoanViewHolder extends RecyclerView.ViewHolder{
         private TextView txtEmail,txtTen,txtSoDu;
         private ImageView imgTaiKhoan;
-        private Button btndelete,btnupdateMoney;
+        private Button btndelete,btnupdateMoney,btnbanStatus;
         public taiKhoanViewHolder(@NonNull View itemView) {
             super(itemView);
             txtEmail = itemView.findViewById(R.id.txtEmail);
@@ -90,6 +138,7 @@ public class adapterTaiKhoan extends RecyclerView.Adapter<adapterTaiKhoan.taiKho
             txtSoDu = itemView.findViewById(R.id.txtSoDu);
             imgTaiKhoan = itemView.findViewById(R.id.imgTaiKhoan);
             btndelete = itemView.findViewById(R.id.btndelete);
+            btnbanStatus = itemView.findViewById(R.id.btnbanStatus);
             btnupdateMoney = itemView.findViewById(R.id.btnupdateMoney);
             btnupdateMoney.setOnClickListener(new View.OnClickListener() {
                 @Override

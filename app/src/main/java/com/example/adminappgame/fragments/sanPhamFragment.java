@@ -43,17 +43,21 @@ public class sanPhamFragment extends Fragment {
     private RecyclerView rcv;
     private FloatingActionButton fab;
     Dialog dialog;
-    EditText edtenSP,edGia,edMaLoai,edDungLuong,edMoTa,edLinkAnh,edSoLuongTai;
+    EditText edtenSP, edGia, edMaLoai, edDungLuong, edMoTa, edLinkAnh, edSoLuongTai;
     Button btnSave, btnCancel;
     adapterSanPham adapter;
-    private List<SanPham>sanPhamList;
+    private List<SanPham> sanPhamList;
     private FirebaseFirestore firestore;
+    //để add collection
     private CollectionReference sanPhamCollection;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_san_pham, container, false);
+        View view = inflater.inflate(R.layout.fragment_san_pham, container, false);
         firestore = FirebaseFirestore.getInstance();
+
+        //truy cập collection
         sanPhamCollection = firestore.collection("games");
         rcv = view.findViewById(R.id.rcvSP);
         sanPhamList = new ArrayList<>();
@@ -121,7 +125,8 @@ public class sanPhamFragment extends Fragment {
                 });
         builder.create().show();
     }
-    private void thuchienxoa(int position){
+
+    private void thuchienxoa(int position) {
         SanPham sanPhamValue = sanPhamList.get(position);
         String documentID = sanPhamValue.getDocumentId();
 
@@ -145,7 +150,8 @@ public class sanPhamFragment extends Fragment {
             Log.d(TAG, "Document ID: " + documentID);
         }
     }
-    private void updatedialog(int position){
+
+    private void updatedialog(int position) {
         SanPham sanPhamValue = sanPhamList.get(position);
         Dialog dialog1 = new Dialog(getContext());
         dialog1.setContentView(R.layout.opendialog_sanpham);
@@ -225,7 +231,8 @@ public class sanPhamFragment extends Fragment {
         });
         dialog1.show();
     }
-    private void DialogInsert(){
+
+    private void DialogInsert() {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.opendialog_sanpham);
         edtenSP = dialog.findViewById(R.id.edTenSP);
@@ -279,7 +286,6 @@ public class sanPhamFragment extends Fragment {
         dialog.show();
 
     }
-
 
 
 }

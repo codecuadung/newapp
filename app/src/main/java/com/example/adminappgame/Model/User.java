@@ -6,6 +6,33 @@ public class User {
     private int money;
     private String profileImg;
     private String password;
+    private boolean banStatus;
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isBanStatus() {
+        return banStatus;
+    }
+
+    public void setBanStatus(boolean banStatus) {
+        this.banStatus = banStatus;
+    }
+
+    public User(String email, String name, int money, String profileImg, String password, boolean banStatus) {
+        this.email = email;
+        this.name = name;
+        this.money = money;
+        this.profileImg = profileImg;
+        this.password = password;
+        this.banStatus = banStatus;
+    }
 
     public String getPassword() {
         return password;

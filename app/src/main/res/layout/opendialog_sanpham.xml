@@ -2,15 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/mau">
-    <ImageView
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:src="@drawable/img"/>
+    android:orientation="vertical">
 
 
     <com.google.android.material.textfield.TextInputLayout

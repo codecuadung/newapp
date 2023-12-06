@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class taiKhoanFragment extends Fragment {
+public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanStatusClickListener {
     private RecyclerView rcv;
     private List<User> listUser;
     private adapterTaiKhoan adapter;
@@ -73,30 +73,107 @@ public class taiKhoanFragment extends Fragment {
             @Override
             public void onUpdateMoneyClick(int position) {
                 User user = listUser.get(position);
-                Recharge recharge = new Recharge();
-                String rechargeId = recharge.getId();
-                collectionReference = db.collection("Recharge").document(rechargeId).collection("CurrentUser");
-                Log.d("TaiKhoanFragment", rechargeId);
+                String userEmail = user.getEmail();
+                checkRecharge(userEmail);
+            }
+        });
+        adapter.setOnBanStatusClickListener(this);
 
-                collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        return view;
+    }
+
+    private void checkRecharge(String userEmail) {
+        collectionReference = db.collection("Recharge");
+        com.google.firebase.firestore.Query query = collectionReference.whereEqualTo("userMail", userEmail);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d("TaiKhoanFragment", "vo roi");
+                        Log.d("TaiKhoanFragment", "Recharge data: " + document.getData().toString());
+                        boolean isRecharge = document.getBoolean("isRecharge");
+                        if (isRecharge == false) {
+                            String userMoney = document.getData().get("userMoney").toString();
+                            String rechargeMoney = document.getData().get("moneyRecharge").toString();
+                            int newUserMoney = Integer.parseInt(userMoney) + Integer.parseInt(rechargeMoney);
+                            performUpdateMoney(userEmail, newUserMoney);
+                        } else {
+                            Toast.makeText(getContext(), "Người dùng đã nạp tiền", Toast.LENGTH_SHORT).show();
+                        }
+                        return;
+                    }
+                    Toast.makeText(getContext(), "Người dùng chưa nạp tiền", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("TaiKhoanFragment", "Error getting recharge data", task.getException());
+                }
+            }
+        });
+    }
+
+    private void performUpdateMoney(String userEmail, int newUserMoney) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        // Tìm người dùng với email cụ thể trong Realtime Database
+        Query query = userRef.orderByChild("email").equalTo(userEmail);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Cập nhật giá trị money cho người dùng
+                    snapshot.getRef().child("money").setValue(newUserMoney)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(getContext(), "Người dùng nạp tiền thành công", Toast.LENGTH_SHORT).show();
+                                    updateIsRecharge(userEmail);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getContext(), "Người dùng nạp tiền thất bại", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("TaiKhoanFragment", "Error getting user data", databaseError.toException());
+            }
+        });
+    }
+
+    private void updateIsRecharge(String userEmail) {
+        collectionReference.whereEqualTo("userMail", userEmail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Lấy dữ liệu từ mỗi tài liệu trong bộ sưu tập "Recharge/{documentId}/CurrentUser" và log ra
-                                Log.d("TaiKhoanFragment", document.getId() + " => " + document.getData());
+                                document.getReference().update("isRecharge", true)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("TaiKhoanFragment", "isRecharge updated successfully");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("TaiKhoanFragment", "Error updating isRecharge", e);
+                                            }
+                                        });
                             }
                         } else {
-                            Log.e("TaiKhoanFragment", "Error getting documents", task.getException());
+                            Log.e("TaiKhoanFragment", "Error getting recharge data", task.getException());
                         }
                     }
                 });
-            }
-        });
-        return view;
-
     }
-    
+
+
     private void showDeleteConfirmationDialog(String userEmail) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Xác nhận xóa tài khoản");
@@ -121,6 +198,7 @@ public class taiKhoanFragment extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
     private void deleteAccount(String userEmail) {
         Query query = reference.orderByChild("email").equalTo(userEmail);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -170,8 +248,48 @@ public class taiKhoanFragment extends Fragment {
     }
 
 
+    @Override
+    public void onBanStatusClick(int position, boolean currentStatus) {
+        Log.e("TaiKhoanFragment", "goi roi");
+        User user = listUser.get(position);
+        String userEmail = user.getEmail();
 
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        Query query = userRef.orderByChild("email").equalTo(userEmail);
 
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String userId = snapshot.getKey(); // Lấy userId từ Realtime Database
+                    if (userId != null) {
+                        DatabaseReference specificUserRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
+                        // Đảo ngược trạng thái khóa tài khoản
+                        specificUserRef.child("banStatus").setValue(!currentStatus)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(getContext(), "Cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show();
+                                        // Cập nhật danh sách người dùng sau khi thay đổi
+                                        userData();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getContext(), "Cập nhật trạng thái thất bại", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("TaiKhoanFragment", "Error getting user data", databaseError.toException());
+            }
+        });
+    }
 
 }
