@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 import com.example.adminappgame.fragments.sanPhamFragment;
 import com.example.adminappgame.fragments.taiKhoanFragment;
-import com.example.adminappgame.fragments.theLoaiFragment;
+import com.example.adminappgame.fragments.topgameFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -22,10 +22,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        Fragment defaultFragment = new theLoaiFragment();
+        Fragment defaultFragment = new topgameFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainer, defaultFragment)
+                .replace(R.id.fragmentContainer, defaultFragment,"topgameFragment")
+                .addToBackStack(null)
                 .commit();
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.nav_TheLoai) {
-                    fragment = new theLoaiFragment();
+                    fragment = new topgameFragment();
                 } else if (item.getItemId() == R.id.nav_home) {
                     fragment = new sanPhamFragment();
                 } else if (item.getItemId() == R.id.nav_TaiKhoan) {
@@ -47,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
                             .beginTransaction()
                             .replace(R.id.fragmentContainer, fragment)
                             .commit();
+
                 }
 
                 return true;
             }
+
         });
     }
 }

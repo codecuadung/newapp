@@ -97,7 +97,7 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
                             String userMoney = document.getData().get("userMoney").toString();
                             String rechargeMoney = document.getData().get("moneyRecharge").toString();
                             int newUserMoney = Integer.parseInt(userMoney) + Integer.parseInt(rechargeMoney);
-                            performUpdateMoney(userEmail, newUserMoney);
+                            performUpdateMoney(userEmail, newUserMoney,Integer.parseInt(rechargeMoney));
                         } else {
                             Toast.makeText(getContext(), "Người dùng đã nạp tiền", Toast.LENGTH_SHORT).show();
                         }
@@ -111,7 +111,7 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
         });
     }
 
-    private void performUpdateMoney(String userEmail, int newUserMoney) {
+    private void performUpdateMoney(String userEmail, int newUserMoney, int rechargeMoney) {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
         // Tìm người dùng với email cụ thể trong Realtime Database
         Query query = userRef.orderByChild("email").equalTo(userEmail);
@@ -126,6 +126,14 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(getContext(), "Người dùng nạp tiền thành công", Toast.LENGTH_SHORT).show();
                                     updateIsRecharge(userEmail);
+                                    //chuyển qua ví
+                                    topgameFragment topgameFragment = (topgameFragment) getParentFragmentManager().findFragmentByTag("topgameFragment");
+                                    if(topgameFragment != null){
+                                        topgameFragment.updateDoanhThu(rechargeMoney);
+
+                                    }else {
+                                        Toast.makeText(getContext(), "null rồi", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
