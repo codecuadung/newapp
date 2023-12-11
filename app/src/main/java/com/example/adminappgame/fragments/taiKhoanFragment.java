@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 
+import com.example.adminappgame.Model.DoanhThu;
 import com.example.adminappgame.Model.Recharge;
 import com.example.adminappgame.Model.User;
 import com.example.adminappgame.R;
@@ -81,7 +82,6 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
 
         return view;
     }
-
     private void checkRecharge(String userEmail) {
         collectionReference = db.collection("Recharge");
         com.google.firebase.firestore.Query query = collectionReference.whereEqualTo("userMail", userEmail);
@@ -126,14 +126,7 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(getContext(), "Người dùng nạp tiền thành công", Toast.LENGTH_SHORT).show();
                                     updateIsRecharge(userEmail);
-                                    //chuyển qua ví
-                                    topgameFragment topgameFragment = (topgameFragment) getParentFragmentManager().findFragmentByTag("topgameFragment");
-                                    if(topgameFragment != null){
-                                        topgameFragment.updateDoanhThu(rechargeMoney);
-
-                                    }else {
-                                        Toast.makeText(getContext(), "null rồi", Toast.LENGTH_SHORT).show();
-                                    }
+                                    updateDoanhThuInFirestore(rechargeMoney);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
@@ -151,6 +144,48 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
             }
         });
     }
+    private void updateDoanhThuInFirestore(int rechargeMoney) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference profitRef = db.collection("profit").document("dRmF7XZkeuDtn97Y7huo");
+
+        profitRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        // Lấy giá trị cũ của DoanhThu
+                        int currentDoanhThu = document.getLong("doanhThu").intValue();
+                        // Cập nhật DoanhThu mới
+                        int updatedDoanhThu = currentDoanhThu + rechargeMoney;
+                        Toast.makeText(getContext(), "Đã thêm " + updatedDoanhThu + " VND vào ví", Toast.LENGTH_SHORT).show();
+
+                        // Tạo một đối tượng ProfitModel mới để cập nhật lên Firestore
+                        DoanhThu doanhThu = new DoanhThu();
+                        doanhThu.setDoanhThu(updatedDoanhThu);
+
+                        // Thực hiện cập nhật
+                        profitRef.set(doanhThu).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("TaiKhoanFragment", "DoanhThu updated successfully");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("TaiKhoanFragment", "Error updating DoanhThu", e);
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(getContext(), "dell vô", Toast.LENGTH_SHORT).show();
+                    Log.e("TaiKhoanFragment", "Error getting profit document", task.getException());
+                }
+            }
+        });
+    }
+
+
 
     private void updateIsRecharge(String userEmail) {
         collectionReference.whereEqualTo("userMail", userEmail)
@@ -180,6 +215,7 @@ public class taiKhoanFragment extends Fragment implements adapterTaiKhoan.OnBanS
                     }
                 });
     }
+
 
 
     private void showDeleteConfirmationDialog(String userEmail) {

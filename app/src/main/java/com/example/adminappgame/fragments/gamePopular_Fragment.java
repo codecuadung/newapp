@@ -22,8 +22,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.adminappgame.Model.NewGame;
+import com.example.adminappgame.Model.PopularGame;
 import com.example.adminappgame.R;
 import com.example.adminappgame.adapters.adapterNewSanPham;
+import com.example.adminappgame.adapters.adapterPopularGame;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -37,42 +39,42 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class newGame_Fragment extends Fragment {
+public class gamePopular_Fragment extends Fragment {
     private RecyclerView rcv;
     private FloatingActionButton fab;
     Dialog dialog;
     EditText edtenSP, edGia, edMaLoai, edDungLuong, edMoTa, edLinkAnh, edSoLuongTai;
     Button btnSave, btnCancel;
-    adapterNewSanPham adapter;
-    private List<NewGame> newGameList;
+    adapterPopularGame adapter;
+    private List<PopularGame> popularGamesList;
     private FirebaseFirestore firestore;
-    private CollectionReference newGameCollection;
+    private CollectionReference popularCollection;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_new_game_, container, false);
+        View view = inflater.inflate(R.layout.fragment_game_popular_, container, false);
         firestore = FirebaseFirestore.getInstance();
 
         //truy cập collection
-        newGameCollection = firestore.collection("NewGames");
-        rcv = view.findViewById(R.id.rcvNewGame);
-        newGameList = new ArrayList<>();
+        popularCollection = firestore.collection("PopularGames");
+        rcv = view.findViewById(R.id.rcvpopular);
+        popularGamesList = new ArrayList<>();
         rcv.setLayoutManager(new LinearLayoutManager(getContext()));
         fab = view.findViewById(R.id.fab);
-        adapter = new adapterNewSanPham(newGameList);
+        adapter = new adapterPopularGame(popularGamesList);
         rcv.setAdapter(adapter);
 
 
-        adapter.setOnDeleteClickListener(new adapterNewSanPham.OnDeleteClickListener() {
+        adapter.setOnDeleteClickListener(new adapterPopularGame.OnDeleteClickListener() {
             @Override
             public void onDeleteClick(int position) {
                 deleteItem(position);
             }
         });
         //update
-        adapter.setOnUpdateClickListener(new adapterNewSanPham.OnUpdateClickListener() {
+        adapter.setOnUpdateClickListener(new adapterPopularGame.OnUpdateClickListener() {
             @Override
             public void onUpdateClick(int position) {
                 updatedialog(position);
@@ -85,19 +87,19 @@ public class newGame_Fragment extends Fragment {
                 DialogInsert();
             }
         });
-        newGameCollection.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        popularCollection.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                newGameList.clear();
+                popularGamesList.clear();
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    NewGame newGame = documentSnapshot.toObject(NewGame.class);
+                    PopularGame popularGame = documentSnapshot.toObject(PopularGame.class);
                     String documentID = documentSnapshot.getId();
                     if (documentID != null) {
-                        newGame.setDocumentId(documentID);
+                        popularGame.setDocumentId(documentID);
                     }
-                    newGameList.add(newGame);
+                    popularGamesList.add(popularGame);
                 }
-                adapter = new adapterNewSanPham(newGameList);
+                adapter = new adapterPopularGame(popularGamesList);
                 rcv.setAdapter(adapter);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -108,6 +110,7 @@ public class newGame_Fragment extends Fragment {
         });
         return view;
     }
+
     private void deleteItem(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này?")
@@ -125,11 +128,11 @@ public class newGame_Fragment extends Fragment {
     }
 
     private void thuchienxoa(int position) {
-        NewGame newGameValue = newGameList.get(position);
-        String documentID = newGameValue.getDocumentId();
+        PopularGame popularGameValue = popularGamesList.get(position);
+        String documentID = popularGameValue.getDocumentId();
 
         if (documentID != null) {
-            newGameCollection.document(documentID).delete()
+            popularCollection.document(documentID).delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -150,7 +153,7 @@ public class newGame_Fragment extends Fragment {
     }
 
     private void updatedialog(int position) {
-        NewGame newGameValue = newGameList.get(position);
+        PopularGame popularGameValue = popularGamesList.get(position);
         Dialog dialog1 = new Dialog(getContext());
         dialog1.setContentView(R.layout.opendialog_sanpham);
 
@@ -164,13 +167,13 @@ public class newGame_Fragment extends Fragment {
         btnSave = dialog1.findViewById(R.id.btnSaveTL);
         btnCancel = dialog1.findViewById(R.id.btnCancelTL);
 
-        edtenSP.setText(newGameValue.getName());
-        edGia.setText(String.valueOf(newGameValue.getPrice()));
-        edMaLoai.setText(String.valueOf(newGameValue.getGenre()));
-        edSoLuongTai.setText(String.valueOf(newGameValue.getDownloaded()));
-        edDungLuong.setText(newGameValue.getStorage());
-        edMoTa.setText(newGameValue.getDescription());
-        edLinkAnh.setText(newGameValue.getImg_url());
+        edtenSP.setText(popularGameValue.getName());
+        edGia.setText(String.valueOf(popularGameValue.getPrice()));
+        edMaLoai.setText(String.valueOf(popularGameValue.getGenre()));
+        edSoLuongTai.setText(String.valueOf(popularGameValue.getDownloaded()));
+        edDungLuong.setText(popularGameValue.getStorage());
+        edMoTa.setText(popularGameValue.getDescription());
+        edLinkAnh.setText(popularGameValue.getImg_url());
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,17 +191,17 @@ public class newGame_Fragment extends Fragment {
                     return;
                 }
                 //update
-                newGameValue.setName(tenSP);
-                newGameValue.setPrice(giaSP);
-                newGameValue.setGenre(maLoai);
-                newGameValue.setDownloaded(soLuongTai);
-                newGameValue.setStorage(dungLuong);
-                newGameValue.setDescription(moTa);
-                newGameValue.setImg_url(linkAnh);
+                popularGameValue.setName(tenSP);
+                popularGameValue.setPrice(giaSP);
+                popularGameValue.setGenre(maLoai);
+                popularGameValue.setDownloaded(soLuongTai);
+                popularGameValue.setStorage(dungLuong);
+                popularGameValue.setDescription(moTa);
+                popularGameValue.setImg_url(linkAnh);
 
-                String documentID = newGameValue.getDocumentId();
+                String documentID = popularGameValue.getDocumentId();
                 if (documentID != null) {
-                    newGameCollection.document(documentID).set(newGameValue)
+                    popularCollection.document(documentID).set(popularGameValue)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -255,8 +258,8 @@ public class newGame_Fragment extends Fragment {
                 String linkAnh = edLinkAnh.getText().toString().trim();
                 String soluongtai = edSoLuongTai.getText().toString().trim();
 
-                NewGame newGame = new NewGame(tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), dungLuong, moTa, linkAnh, Integer.parseInt(soluongtai));
-                newGameCollection.add(newGame)
+                PopularGame popularGame = new PopularGame(tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), dungLuong, moTa, linkAnh, Integer.parseInt(soluongtai));
+                popularCollection.add(popularGame)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
@@ -284,6 +287,4 @@ public class newGame_Fragment extends Fragment {
         dialog.show();
 
     }
-
-
 }

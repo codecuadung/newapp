@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.adminappgame.fragments.gamePopular_Fragment;
+import com.example.adminappgame.fragments.newGame_Fragment;
 import com.example.adminappgame.fragments.sanPhamFragment;
 import com.example.adminappgame.fragments.taiKhoanFragment;
 import com.example.adminappgame.fragments.topgameFragment;
@@ -36,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.nav_TheLoai) {
                     fragment = new topgameFragment();
-                } else if (item.getItemId() == R.id.nav_home) {
+                } else if (item.getItemId() == R.id.nav_new_game) {
+                    fragment = new newGame_Fragment();
+                } else if (item.getItemId() == R.id.nav_new_popular) {
+                    fragment = new gamePopular_Fragment();
+                }else if (item.getItemId() == R.id.nav_home) {
                     fragment = new sanPhamFragment();
                 } else if (item.getItemId() == R.id.nav_TaiKhoan) {
                     fragment = new taiKhoanFragment();

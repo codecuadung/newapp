@@ -10,21 +10,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.example.adminappgame.Model.NewGame;
-import com.example.adminappgame.Model.SanPham;
+import com.example.adminappgame.Model.PopularGame;
 import com.example.adminappgame.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class adapterNewSanPham extends RecyclerView.Adapter<adapterNewSanPham.newGameViewholder> {
-    private List<NewGame> newGameList;
+public class adapterPopularGame extends RecyclerView.Adapter<adapterPopularGame.popularGameViewHolder> {
+    private List<PopularGame> popularGamesList;
     public interface OnUpdateClickListener {
         void onUpdateClick(int position);
     }
-    private static adapterNewSanPham.OnUpdateClickListener onUpdateClickListener;
+    private static adapterPopularGame.OnUpdateClickListener onUpdateClickListener;
 
-    public void setOnUpdateClickListener(adapterNewSanPham.OnUpdateClickListener listener) {
+    public void setOnUpdateClickListener(adapterPopularGame.OnUpdateClickListener listener) {
         this.onUpdateClickListener = listener;
     }
 
@@ -33,31 +34,31 @@ public class adapterNewSanPham extends RecyclerView.Adapter<adapterNewSanPham.ne
         void onDeleteClick(int position);
     }
 
-    private static adapterNewSanPham.OnDeleteClickListener onDeleteClickListener;
+    private static adapterPopularGame.OnDeleteClickListener onDeleteClickListener;
 
-    public void setOnDeleteClickListener(adapterNewSanPham.OnDeleteClickListener listener) {
+    public void setOnDeleteClickListener(adapterPopularGame.OnDeleteClickListener listener) {
         this.onDeleteClickListener = listener;
     }
     public void deleteItem(int position) {
-        newGameList.remove(position);
+        popularGamesList.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, newGameList.size());
+        notifyItemRangeChanged(position, popularGamesList.size());
     }
-    public adapterNewSanPham(List<NewGame> newGameList) {
-        this.newGameList = newGameList;
+    public adapterPopularGame(List<PopularGame> popularGamesList) {
+        this.popularGamesList = popularGamesList;
     }
     @NonNull
     @Override
-    public newGameViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_game,parent,false);
-        return new newGameViewholder(view);
+    public popularGameViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_popular_game,parent,false);
+        return new popularGameViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull newGameViewholder holder, int position) {
-        NewGame newGame = newGameList.get(position);
-        holder.bind(newGame);
-        Picasso.get().load(newGame.getImg_url()).into(holder.img_url);
+    public void onBindViewHolder(@NonNull popularGameViewHolder holder, int position) {
+        PopularGame popularGame = popularGamesList.get(position);
+        holder.bind(popularGame);
+        Picasso.get().load(popularGame.getImg_url()).into(holder.img_url);
         holder.btndelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,14 +71,14 @@ public class adapterNewSanPham extends RecyclerView.Adapter<adapterNewSanPham.ne
 
     @Override
     public int getItemCount() {
-        return newGameList.size();
+        return popularGamesList.size();
     }
 
-    public static class newGameViewholder extends RecyclerView.ViewHolder {
+    public static class popularGameViewHolder extends RecyclerView.ViewHolder {
         private ImageView img_url;
         private TextView txtName, txtStorage, txtDownloaded, txtPrice, txtDescription;
         private Button btndelete,btnupdate;
-        public newGameViewholder(@NonNull View itemView) {
+        public popularGameViewHolder(@NonNull View itemView) {
             super(itemView);
             img_url = itemView.findViewById(R.id.img_url);
             txtName = itemView.findViewById(R.id.txtName);
@@ -87,6 +88,7 @@ public class adapterNewSanPham extends RecyclerView.Adapter<adapterNewSanPham.ne
             txtDownloaded = itemView.findViewById(R.id.txtDownloaded);
             btndelete = itemView.findViewById(R.id.btndelete);
             btnupdate = itemView.findViewById(R.id.btnUpdate);
+
             btnupdate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -110,13 +112,12 @@ public class adapterNewSanPham extends RecyclerView.Adapter<adapterNewSanPham.ne
                 }
             });
         }
-        public void bind(NewGame newGame) {
-            txtName.setText("Tên: " + newGame.getName());
-            txtStorage.setText("Dung lượng: " + newGame.getStorage());
-            txtPrice.setText("Giá: " + newGame.getPrice() + "đ");
-            txtDescription.setText("Mô tả: " + newGame.getDescription());
-            txtDownloaded.setText("Số lượng tải: "+newGame.getDownloaded());
+        public void bind(PopularGame popularGame) {
+            txtName.setText("Tên: " + popularGame.getName());
+            txtStorage.setText("Dung lượng: " + popularGame.getStorage());
+            txtPrice.setText("Giá: " + popularGame.getPrice() + "đ");
+            txtDescription.setText("Mô tả: " + popularGame.getDescription());
+            txtDownloaded.setText("Số lượng tải: "+popularGame.getDownloaded());
         }
     }
-
 }

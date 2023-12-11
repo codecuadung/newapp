@@ -1,6 +1,6 @@
 package com.example.adminappgame.Model;
 
-public class NewGame {
+public class PopularGame {
     private String documentId;
 
     public String getDocumentId() {
@@ -11,7 +11,7 @@ public class NewGame {
         this.documentId = documentId;
     }
 
-    public NewGame(String documentId, String name, int price, int genre, String storage, String description, String img_url, int downloaded) {
+    public PopularGame(String documentId, String name, int price, int genre, String storage, String description, String img_url, int downloaded) {
         this.documentId = documentId;
         this.name = name;
         this.price = price;
@@ -86,7 +86,7 @@ public class NewGame {
         this.downloaded = downloaded;
     }
 
-    public NewGame(String name, int price, int genre, String storage, String description, String img_url, int downloaded) {
+    public PopularGame(String name, int price, int genre, String storage, String description, String img_url, int downloaded) {
         this.name = name;
         this.price = price;
         this.genre = genre;
@@ -96,6 +96,6 @@ public class NewGame {
         this.downloaded = downloaded;
     }
 
-    public NewGame() {
+    public PopularGame() {
     }
 }
