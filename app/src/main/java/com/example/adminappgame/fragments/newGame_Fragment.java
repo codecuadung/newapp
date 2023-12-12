@@ -175,23 +175,40 @@ public class newGame_Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String tenSP = edtenSP.getText().toString().trim();
-                int giaSP = Integer.parseInt(edGia.getText().toString().trim());
-                int maLoai = Integer.parseInt(edMaLoai.getText().toString().trim());
-                int soLuongTai = Integer.parseInt(edSoLuongTai.getText().toString().trim());
+                String giaSP = edGia.getText().toString().trim();
+                String maLoai = edMaLoai.getText().toString().trim();
+                String soLuongTai = edSoLuongTai.getText().toString().trim();
                 String dungLuong = edDungLuong.getText().toString().trim();
                 String moTa = edMoTa.getText().toString().trim();
                 String linkAnh = edLinkAnh.getText().toString().trim();
-                if (TextUtils.isEmpty(tenSP) || TextUtils.isEmpty(String.valueOf(giaSP)) || TextUtils.isEmpty(String.valueOf(maLoai))
-                        || TextUtils.isEmpty(String.valueOf(soLuongTai)) || TextUtils.isEmpty(dungLuong)
+
+                if (TextUtils.isEmpty(tenSP) || TextUtils.isEmpty(giaSP) || TextUtils.isEmpty(String.valueOf(maLoai))
+                        || TextUtils.isEmpty(soLuongTai) || TextUtils.isEmpty(dungLuong)
                         || TextUtils.isEmpty(moTa) || TextUtils.isEmpty(linkAnh)) {
                     Snackbar.make(view, "Vui lòng điền đầy đủ thông tin", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
+
+                try {
+                    // Kiểm tra giá sản phẩm, mã loại và số lượng tải là số dương
+                    int gia = Integer.parseInt(giaSP);
+                    int maLoaiInt = Integer.parseInt(maLoai);
+                    int soLuong = Integer.parseInt(soLuongTai);
+
+                    // Kiểm tra giá sản phẩm, mã loại và số lượng tải là số dương
+                    if (gia < 0 || maLoaiInt < 0 || soLuong < 0) {
+                        Snackbar.make(view, "Vui lòng nhập số nguyên dương cho giá, mã loại và số lượng tải", Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    Snackbar.make(view, "Vui lòng nhập số nguyên dương cho giá, mã loại và số lượng tải", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
                 //update
                 newGameValue.setName(tenSP);
-                newGameValue.setPrice(giaSP);
-                newGameValue.setGenre(maLoai);
-                newGameValue.setDownloaded(soLuongTai);
+                newGameValue.setPrice(Integer.parseInt(giaSP));
+                newGameValue.setGenre(Integer.parseInt(maLoai));
+                newGameValue.setDownloaded(Integer.parseInt(soLuongTai));
                 newGameValue.setStorage(dungLuong);
                 newGameValue.setDescription(moTa);
                 newGameValue.setImg_url(linkAnh);
@@ -254,8 +271,33 @@ public class newGame_Fragment extends Fragment {
                 String moTa = edMoTa.getText().toString().trim();
                 String linkAnh = edLinkAnh.getText().toString().trim();
                 String soluongtai = edSoLuongTai.getText().toString().trim();
+                DocumentReference reference = newGameCollection.document();
+                String documentID = reference.getId();
 
-                NewGame newGame = new NewGame(tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), dungLuong, moTa, linkAnh, Integer.parseInt(soluongtai));
+                if (TextUtils.isEmpty(tenSP) || TextUtils.isEmpty(giaSP) || TextUtils.isEmpty(maLoai)
+                        || TextUtils.isEmpty(dungLuong) || TextUtils.isEmpty(moTa)
+                        || TextUtils.isEmpty(linkAnh) || TextUtils.isEmpty(soluongtai)) {
+                    Snackbar.make(view, "Vui lòng điền đầy đủ thông tin", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    int gia = Integer.parseInt(giaSP);
+                    int maLoaiInt = Integer.parseInt(maLoai);
+                    int soLuong = Integer.parseInt(soluongtai);
+
+                    // Kiểm tra giá sản phẩm, mã loại và số lượng tải là số dương
+                    if (gia < 0 || maLoaiInt < 0 || soLuong < 0) {
+                        Snackbar.make(view, "Vui lòng nhập số nguyên dương cho giá, mã loại và số lượng tải", Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    Snackbar.make(view, "Vui lòng nhập số nguyên dương cho giá, mã loại và số lượng tải", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                NewGame newGame = new NewGame(documentID,tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), dungLuong, moTa, linkAnh, Integer.parseInt(soluongtai));
                 newGameCollection.add(newGame)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override

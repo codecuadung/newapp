@@ -1,7 +1,7 @@
 package com.example.adminappgame.Model;
 
 public class NewGame {
-    private String documentId;
+    private transient String documentId;
 
     public String getDocumentId() {
         return documentId;

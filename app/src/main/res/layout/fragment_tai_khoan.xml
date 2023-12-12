@@ -4,13 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.taiKhoanFragment">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvtk"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp" />
+        android:orientation="vertical">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnDangXuat"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="end"
+            android:layout_marginRight="10dp"
+            android:text="Đăng xuất"
+            android:backgroundTint="#E32541"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvtk"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp" />
+    </LinearLayout>
 </FrameLayout>
