@@ -10,21 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adminappgame.Model.NewGame;
 import com.example.adminappgame.Model.SanPham;
 import com.example.adminappgame.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class adapterSanPham extends RecyclerView.Adapter<adapterSanPham.sanPhamViewHolder> {
-
-    private List<SanPham> sanPhamList;
+public class adapterNewSanPham extends RecyclerView.Adapter<adapterNewSanPham.newGameViewholder> {
+    private List<NewGame> newGameList;
     public interface OnUpdateClickListener {
         void onUpdateClick(int position);
     }
-    private static OnUpdateClickListener onUpdateClickListener;
+    private static adapterNewSanPham.OnUpdateClickListener onUpdateClickListener;
 
-    public void setOnUpdateClickListener(OnUpdateClickListener listener) {
+    public void setOnUpdateClickListener(adapterNewSanPham.OnUpdateClickListener listener) {
         this.onUpdateClickListener = listener;
     }
 
@@ -33,31 +33,31 @@ public class adapterSanPham extends RecyclerView.Adapter<adapterSanPham.sanPhamV
         void onDeleteClick(int position);
     }
 
-    private static OnDeleteClickListener onDeleteClickListener;
+    private static adapterNewSanPham.OnDeleteClickListener onDeleteClickListener;
 
-    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+    public void setOnDeleteClickListener(adapterNewSanPham.OnDeleteClickListener listener) {
         this.onDeleteClickListener = listener;
     }
     public void deleteItem(int position) {
-        sanPhamList.remove(position);
+        newGameList.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, sanPhamList.size());
+        notifyItemRangeChanged(position, newGameList.size());
     }
-    public adapterSanPham(List<SanPham> sanPhamList) {
-        this.sanPhamList = sanPhamList;
+    public adapterNewSanPham(List<NewGame> newGameList) {
+        this.newGameList = newGameList;
     }
     @NonNull
     @Override
-    public sanPhamViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_san_pham,parent,false);
-        return new sanPhamViewHolder(view);
+    public newGameViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_game,parent,false);
+        return new newGameViewholder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull sanPhamViewHolder holder, int position) {
-        SanPham sanPham = sanPhamList.get(position);
-        holder.bind(sanPham);
-        Picasso.get().load(sanPham.getImg_url()).into(holder.imgSanPham);
+    public void onBindViewHolder(@NonNull newGameViewholder holder, int position) {
+        NewGame newGame = newGameList.get(position);
+        holder.bind(newGame);
+        Picasso.get().load(newGame.getImg_url()).into(holder.img_url);
         holder.btndelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,26 +70,23 @@ public class adapterSanPham extends RecyclerView.Adapter<adapterSanPham.sanPhamV
 
     @Override
     public int getItemCount() {
-        return sanPhamList.size();
+        return newGameList.size();
     }
 
-    public static class sanPhamViewHolder extends RecyclerView.ViewHolder{
-        private ImageView imgSanPham;
-        private TextView txtTenSP, txtSoLuongTai, txtDungLuong, txtGiaChiTiet, txtMota;
+    public static class newGameViewholder extends RecyclerView.ViewHolder {
+        private ImageView img_url;
+        private TextView txtName, txtStorage, txtDownloaded, txtPrice, txtDescription;
         private Button btndelete,btnupdate;
-
-
-        public sanPhamViewHolder(@NonNull View itemView) {
+        public newGameViewholder(@NonNull View itemView) {
             super(itemView);
-            imgSanPham = itemView.findViewById(R.id.imgSanPham);
-            txtTenSP = itemView.findViewById(R.id.txtTenSP);
-            txtDungLuong = itemView.findViewById(R.id.txtDungLuong);
-            txtGiaChiTiet = itemView.findViewById(R.id.txtGiaChiTiet);
-            txtMota = itemView.findViewById(R.id.txtMota);
-            txtSoLuongTai = itemView.findViewById(R.id.txtSoLuongTai);
+            img_url = itemView.findViewById(R.id.img_url);
+            txtName = itemView.findViewById(R.id.txtName);
+            txtStorage = itemView.findViewById(R.id.txtStorage);
+            txtPrice = itemView.findViewById(R.id.txtPrice);
+            txtDescription = itemView.findViewById(R.id.txtDescription);
+            txtDownloaded = itemView.findViewById(R.id.txtDownloaded);
             btndelete = itemView.findViewById(R.id.btndelete);
             btnupdate = itemView.findViewById(R.id.btnUpdate);
-
             btnupdate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -112,14 +109,14 @@ public class adapterSanPham extends RecyclerView.Adapter<adapterSanPham.sanPhamV
                     }
                 }
             });
-
         }
-        public void bind(SanPham sanPham) {
-            txtTenSP.setText("Tên: " + sanPham.getName());
-            txtDungLuong.setText("Dung lượng: " + sanPham.getStorage());
-            txtGiaChiTiet.setText("Giá: " + sanPham.getPrice() + "đ");
-            txtMota.setText("Mô tả: " + sanPham.getDescription());
-            txtSoLuongTai.setText("Số lượng tải: "+sanPham.getDownloaded());
+        public void bind(NewGame newGame) {
+            txtName.setText("Tên: " + newGame.getName());
+            txtStorage.setText("Dung lượng: " + newGame.getStorage());
+            txtPrice.setText("Giá: " + newGame.getPrice() + "đ");
+            txtDescription.setText("Mô tả: " + newGame.getDescription());
+            txtDownloaded.setText("Số lượng tải: "+newGame.getDownloaded());
         }
     }
+
 }

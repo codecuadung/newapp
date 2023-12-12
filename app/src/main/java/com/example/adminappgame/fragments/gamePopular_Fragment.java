@@ -3,7 +3,6 @@ package com.example.adminappgame.fragments;
 import static android.content.ContentValues.TAG;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -22,9 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.adminappgame.Model.SanPham;
+import com.example.adminappgame.Model.NewGame;
+import com.example.adminappgame.Model.PopularGame;
 import com.example.adminappgame.R;
-import com.example.adminappgame.adapters.adapterSanPham;
+import com.example.adminappgame.adapters.adapterNewSanPham;
+import com.example.adminappgame.adapters.adapterPopularGame;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,44 +37,44 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class sanPhamFragment extends Fragment {
+public class gamePopular_Fragment extends Fragment {
     private RecyclerView rcv;
     private FloatingActionButton fab;
     Dialog dialog;
     EditText edtenSP, edGia, edMaLoai, edDungLuong, edMoTa, edLinkAnh, edSoLuongTai;
     Button btnSave, btnCancel;
-    adapterSanPham adapter;
-    private List<SanPham> sanPhamList;
+    adapterPopularGame adapter;
+    private List<PopularGame> popularGamesList;
     private FirebaseFirestore firestore;
-    //để add collection
-    private CollectionReference sanPhamCollection;
+    private CollectionReference popularCollection;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_san_pham, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_game_popular_, container, false);
         firestore = FirebaseFirestore.getInstance();
 
         //truy cập collection
-        sanPhamCollection = firestore.collection("games");
-        rcv = view.findViewById(R.id.rcvSP);
-        sanPhamList = new ArrayList<>();
+        popularCollection = firestore.collection("PopularGames");
+        rcv = view.findViewById(R.id.rcvpopular);
+        popularGamesList = new ArrayList<>();
         rcv.setLayoutManager(new LinearLayoutManager(getContext()));
         fab = view.findViewById(R.id.fab);
-        adapter = new adapterSanPham(sanPhamList);
+        adapter = new adapterPopularGame(popularGamesList);
         rcv.setAdapter(adapter);
 
-        adapter.setOnDeleteClickListener(new adapterSanPham.OnDeleteClickListener() {
+
+        adapter.setOnDeleteClickListener(new adapterPopularGame.OnDeleteClickListener() {
             @Override
             public void onDeleteClick(int position) {
                 deleteItem(position);
             }
         });
         //update
-        adapter.setOnUpdateClickListener(new adapterSanPham.OnUpdateClickListener() {
+        adapter.setOnUpdateClickListener(new adapterPopularGame.OnUpdateClickListener() {
             @Override
             public void onUpdateClick(int position) {
                 updatedialog(position);
@@ -86,19 +87,19 @@ public class sanPhamFragment extends Fragment {
                 DialogInsert();
             }
         });
-        sanPhamCollection.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        popularCollection.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                sanPhamList.clear();
+                popularGamesList.clear();
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    SanPham sanPham = documentSnapshot.toObject(SanPham.class);
+                    PopularGame popularGame = documentSnapshot.toObject(PopularGame.class);
                     String documentID = documentSnapshot.getId();
                     if (documentID != null) {
-                        sanPham.setDocumentId(documentID);
+                        popularGame.setDocumentId(documentID);
                     }
-                    sanPhamList.add(sanPham);
+                    popularGamesList.add(popularGame);
                 }
-                adapter = new adapterSanPham(sanPhamList);
+                adapter = new adapterPopularGame(popularGamesList);
                 rcv.setAdapter(adapter);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -127,11 +128,11 @@ public class sanPhamFragment extends Fragment {
     }
 
     private void thuchienxoa(int position) {
-        SanPham sanPhamValue = sanPhamList.get(position);
-        String documentID = sanPhamValue.getDocumentId();
+        PopularGame popularGameValue = popularGamesList.get(position);
+        String documentID = popularGameValue.getDocumentId();
 
         if (documentID != null) {
-            sanPhamCollection.document(documentID).delete()
+            popularCollection.document(documentID).delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -152,7 +153,7 @@ public class sanPhamFragment extends Fragment {
     }
 
     private void updatedialog(int position) {
-        SanPham sanPhamValue = sanPhamList.get(position);
+        PopularGame popularGameValue = popularGamesList.get(position);
         Dialog dialog1 = new Dialog(getContext());
         dialog1.setContentView(R.layout.opendialog_sanpham);
 
@@ -166,13 +167,13 @@ public class sanPhamFragment extends Fragment {
         btnSave = dialog1.findViewById(R.id.btnSaveTL);
         btnCancel = dialog1.findViewById(R.id.btnCancelTL);
 
-        edtenSP.setText(sanPhamValue.getName());
-        edGia.setText(String.valueOf(sanPhamValue.getPrice()));
-        edMaLoai.setText(String.valueOf(sanPhamValue.getGenre()));
-        edSoLuongTai.setText(String.valueOf(sanPhamValue.getDownloaded()));
-        edDungLuong.setText(sanPhamValue.getStorage());
-        edMoTa.setText(sanPhamValue.getDescription());
-        edLinkAnh.setText(sanPhamValue.getImg_url());
+        edtenSP.setText(popularGameValue.getName());
+        edGia.setText(String.valueOf(popularGameValue.getPrice()));
+        edMaLoai.setText(String.valueOf(popularGameValue.getGenre()));
+        edSoLuongTai.setText(String.valueOf(popularGameValue.getDownloaded()));
+        edDungLuong.setText(popularGameValue.getStorage());
+        edMoTa.setText(popularGameValue.getDescription());
+        edLinkAnh.setText(popularGameValue.getImg_url());
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,18 +207,19 @@ public class sanPhamFragment extends Fragment {
                     Snackbar.make(view, "Vui lòng nhập số nguyên dương cho giá, mã loại và số lượng tải", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                //update
-                sanPhamValue.setName(tenSP);
-                sanPhamValue.setPrice(Integer.parseInt(giaSP));
-                sanPhamValue.setGenre(Integer.parseInt(maLoai));
-                sanPhamValue.setDownloaded(Integer.parseInt(soLuongTai));
-                sanPhamValue.setStorage(dungLuong);
-                sanPhamValue.setDescription(moTa);
-                sanPhamValue.setImg_url(linkAnh);
 
-                String documentID = sanPhamValue.getDocumentId();
+                //update
+                popularGameValue.setName(tenSP);
+                popularGameValue.setPrice(Integer.parseInt(giaSP));
+                popularGameValue.setGenre(Integer.parseInt(maLoai));
+                popularGameValue.setDownloaded(Integer.parseInt(soLuongTai));
+                popularGameValue.setStorage(dungLuong);
+                popularGameValue.setDescription(moTa);
+                popularGameValue.setImg_url(linkAnh);
+
+                String documentID = popularGameValue.getDocumentId();
                 if (documentID != null) {
-                    sanPhamCollection.document(documentID).set(sanPhamValue)
+                    popularCollection.document(documentID).set(popularGameValue)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -273,6 +275,8 @@ public class sanPhamFragment extends Fragment {
                 String moTa = edMoTa.getText().toString().trim();
                 String linkAnh = edLinkAnh.getText().toString().trim();
                 String soluongtai = edSoLuongTai.getText().toString().trim();
+                DocumentReference reference = popularCollection.document();
+                String documentID = reference.getId();
 
                 if (TextUtils.isEmpty(tenSP) || TextUtils.isEmpty(giaSP) || TextUtils.isEmpty(maLoai)
                         || TextUtils.isEmpty(dungLuong) || TextUtils.isEmpty(moTa)
@@ -296,12 +300,8 @@ public class sanPhamFragment extends Fragment {
                     return;
                 }
 
-
-                DocumentReference reference = sanPhamCollection.document();
-                String documentID = reference.getId();
-
-                SanPham sanPham = new SanPham(documentID,tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), linkAnh, moTa, dungLuong, Integer.parseInt(soluongtai));
-                sanPhamCollection.add(sanPham)
+                PopularGame popularGame = new PopularGame(documentID,tenSP, Integer.parseInt(giaSP), Integer.parseInt(maLoai), dungLuong, moTa, linkAnh, Integer.parseInt(soluongtai));
+                popularCollection.add(popularGame)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
@@ -318,7 +318,6 @@ public class sanPhamFragment extends Fragment {
                             }
                         });
 
-
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -330,6 +329,4 @@ public class sanPhamFragment extends Fragment {
         dialog.show();
 
     }
-
-
 }

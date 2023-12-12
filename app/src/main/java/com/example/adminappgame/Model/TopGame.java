@@ -1,6 +1,6 @@
 package com.example.adminappgame.Model;
 
-public class SanPham {
+public class TopGame {
     private transient String documentId;
     private String name;
     private int price;
@@ -17,7 +17,7 @@ public class SanPham {
         this.documentId = documentId;
     }
 
-    public SanPham(String documentId, String name, int price, int genre, String img_url, String description, String storage, int downloaded) {
+    public TopGame(String documentId, String name, int price, int genre, String img_url, String description, String storage, int downloaded) {
         this.documentId = documentId;
         this.name = name;
         this.price = price;
@@ -84,7 +84,7 @@ public class SanPham {
         this.downloaded = downloaded;
     }
 
-    public SanPham(String name, int price, int genre, int downloaded, String storage, String description, String img_url) {
+    public TopGame(String name, int price, int genre, int downloaded, String storage, String description, String img_url) {
         this.name = name;
         this.price = price;
         this.genre = genre;
@@ -94,6 +94,6 @@ public class SanPham {
         this.downloaded = downloaded;
     }
 
-    public SanPham() {
+    public TopGame() {
     }
 }

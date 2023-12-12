@@ -1,14 +1,8 @@
 package com.example.adminappgame.Model;
 
-public class SanPham {
+public class PopularGame {
     private transient String documentId;
-    private String name;
-    private int price;
-    private int genre;
-    private String img_url;
-    private String description;
-    private String storage;
-    private int downloaded;
+
     public String getDocumentId() {
         return documentId;
     }
@@ -17,16 +11,24 @@ public class SanPham {
         this.documentId = documentId;
     }
 
-    public SanPham(String documentId, String name, int price, int genre, String img_url, String description, String storage, int downloaded) {
+    public PopularGame(String documentId, String name, int price, int genre, String storage, String description, String img_url, int downloaded) {
         this.documentId = documentId;
         this.name = name;
         this.price = price;
         this.genre = genre;
-        this.img_url = img_url;
-        this.description = description;
         this.storage = storage;
+        this.description = description;
+        this.img_url = img_url;
         this.downloaded = downloaded;
     }
+
+    private String name;
+    private int price;
+    private int genre;
+    private String storage;
+    private String description;
+    private String img_url;
+    private int downloaded;
 
     public String getName() {
         return name;
@@ -52,12 +54,12 @@ public class SanPham {
         this.genre = genre;
     }
 
-    public String getImg_url() {
-        return img_url;
+    public String getStorage() {
+        return storage;
     }
 
-    public void setImg_url(String img_url) {
-        this.img_url = img_url;
+    public void setStorage(String storage) {
+        this.storage = storage;
     }
 
     public String getDescription() {
@@ -68,12 +70,12 @@ public class SanPham {
         this.description = description;
     }
 
-    public String getStorage() {
-        return storage;
+    public String getImg_url() {
+        return img_url;
     }
 
-    public void setStorage(String storage) {
-        this.storage = storage;
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
     }
 
     public int getDownloaded() {
@@ -84,16 +86,16 @@ public class SanPham {
         this.downloaded = downloaded;
     }
 
-    public SanPham(String name, int price, int genre, int downloaded, String storage, String description, String img_url) {
+    public PopularGame(String name, int price, int genre, String storage, String description, String img_url, int downloaded) {
         this.name = name;
         this.price = price;
         this.genre = genre;
-        this.img_url = img_url;
-        this.description = description;
         this.storage = storage;
+        this.description = description;
+        this.img_url = img_url;
         this.downloaded = downloaded;
     }
 
-    public SanPham() {
+    public PopularGame() {
     }
 }
